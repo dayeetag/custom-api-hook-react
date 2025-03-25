@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function useApi(URL){
 
@@ -6,20 +6,23 @@ export default function useApi(URL){
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    async function fetchDataFromApi(){
-        try{
-            const result = await fetch(URL)
-            const data = await result.json()
-            setData(data)
+    useEffect(() => {
+        async function fetchDataFromApi(){
+            try{
+                const result = await fetch(URL)
+                const data = await result.json()
+                setData(data)
+            }
+            catch(e){
+                setError(e)
+            }
+            finally {
+                setLoading(false);
+            }
         }
-        catch(e){
-            setError(e)
-        }
-        finally {
-            setLoading(false);
-        }
-    }
+        fetchDataFromApi()
+    }, [URL]);
 
-    fetchDataFromApi()
+    
     return {data, loading, error}
 }
